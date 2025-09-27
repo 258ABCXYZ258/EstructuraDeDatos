@@ -1,0 +1,58 @@
+class Animal:
+    def __init__(self, nombre, edad, tipo):
+        self.nombre = nombre
+        self.edad = edad
+        self.tipo = tipo
+
+    def __str__(self):
+        return f"{self.tipo} - {self.nombre}, {self.edad} años"
+class Nodo:
+    def __init__(self, animal):
+        self.animal = animal
+        self.siguiente = None
+class ListaAnimales:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar(self, animal):
+        if self.buscar(animal.nombre, animal.tipo):
+            print("El animal ya está registrado.")
+            return
+        nuevo = Nodo(animal)
+        if not self.cabeza:
+            self.cabeza = nuevo
+        else:
+            actual = self.cabeza
+            while actual.siguiente:
+                actual = actual.siguiente
+            actual.siguiente = nuevo
+    def buscar(self, nombre, tipo):
+        actual = self.cabeza
+        while actual:
+            if actual.animal.nombre == nombre and actual.animal.tipo == tipo:
+                return True
+            actual = actual.siguiente
+        return False
+    def mostrar_iterativo(self):
+        actual = self.cabeza
+        while actual:
+            print(actual.animal)
+            actual = actual.siguiente
+    def mostrar_recursivo(self, nodo=None):
+        if nodo is None:
+            nodo = self.cabeza
+        if nodo:
+            print(nodo.animal)
+            self.mostrar_recursivo(nodo.siguiente)
+
+          
+zoologico = ListaAnimales()
+zoologico.agregar(Animal("tigre", 5, "León"))
+zoologico.agregar(Animal("ernesto", 2, "Cocodrilo"))
+zoologico.agregar(Animal("Ernesto", 2, "Cocodrilo"))  # Duplicado
+
+print("\nIterativo:")
+zoologico.mostrar_iterativo()
+
+print("\nRecursivo:")
+zoologico.mostrar_recursivo()

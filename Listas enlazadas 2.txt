@@ -1,0 +1,81 @@
+from datetime import datetime
+class Tarea:
+    def __init__(self, descripcion, prioridad, fecha_vencimiento):
+        self.descripcion = descripcion
+        self.prioridad = prioridad
+        self.fecha_vencimiento = datetime.strptime(fecha_vencimiento, "%Y-%m-%d")
+    
+    def __str__(self):
+        return f"[{self.prioridad}] {self.descripcion} (vence: {self.fecha_vencimiento.date()})"
+
+class NodoTarea:
+    def __init__(self, tarea):
+        self.tarea = tarea
+        self.siguiente = None
+
+class ListaTareas:
+    def __init__(self):
+        self.cabeza = None
+
+    def agregar(self, tarea):
+        nuevo = NodoTarea(tarea)
+        if not self.cabeza:
+            self.cabeza = nuevo
+        else:
+            actual = self.cabeza
+            while actual.siguiente:
+                actual = actual.siguiente
+            actual.siguiente = nuevo
+
+    def eliminar(self, descripcion):
+        actual = self.cabeza
+        previo = None
+        while actual:
+            if actual.tarea.descripcion == descripcion:
+                if previo:
+                    previo.siguiente = actual.siguiente
+                else:
+                    self.cabeza = actual.siguiente
+                print(f"Tarea '{descripcion}' eliminada.")
+                return
+            previo = actual
+            actual = actual.siguiente
+        print("⚠️ Tarea no encontrada.")
+
+    def buscar(self, descripcion):
+        actual = self.cabeza
+        while actual:
+            if actual.tarea.descripcion == descripcion:
+                print("✅ Tarea encontrada:", actual.tarea)
+                return
+            actual = actual.siguiente
+        print("⚠️ No se encontró la tarea.")
+
+    def mostrar(self):
+        # Pasar las tareas a una lista normal para poder ordenarlas
+        tareas = []
+        actual = self.cabeza
+        while actual:
+            tareas.append(actual.tarea)
+            actual = actual.siguiente
+        
+        # Ordenar por prioridad y fecha
+        tareas.sort(key=lambda t: (t.prioridad, t.fecha_vencimiento))
+        
+        print("\n Lista de tareas:")
+        for tarea in tareas:
+            print(tarea)
+
+    def completar(self, descripcion):
+        self.eliminar(descripcion)
+
+# Ejemplo de uso
+agenda = ListaTareas()
+agenda.agregar(Tarea("Entregar informe", 1, "2025-09-28"))
+agenda.agregar(Tarea("Comprar víveres", 2, "2025-09-30"))
+agenda.agregar(Tarea("Hacer ejercicio", 3, "2025-10-01"))
+
+agenda.mostrar()
+agenda.buscar("Comprar víveres")
+agenda.completar("Comprar víveres")
+agenda.mostrar()
